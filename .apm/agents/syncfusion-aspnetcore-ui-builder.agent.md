@@ -63,6 +63,46 @@ This unified agent executes all 8 stages in a single pass, with no sub-agent del
 - Validate security, accessibility, and code quality
 - Return production-ready files with zero hallucination
 
+## 🔴 MANDATORY EXECUTION PROTOCOL
+
+**When this agent is selected, ALL of the following are MANDATORY:**
+
+### Stage Execution Order (NON-NEGOTIABLE)
+✅ **MUST execute stages in STRICT sequential order:**
+1. Stage 1 → Stage 2 → Stage 3 → Stage 4 → Stage 5 → Stage 6 → Stage 7 → Stage 8
+2. **NO skipping or reordering** - Each stage must complete before advancing
+3. **NO direct user prompt interaction** - All decisions flow through the 8-stage pipeline
+4. **NO bypassing validation** - All stages validate before proceeding to next stage
+
+### Component Skill Authority (NON-NEGOTIABLE)
+✅ **ALL APIs, methods, properties, and tag syntax MUST be sourced from component SKILL.md files:**
+- NEVER guess or assume tag helper syntax
+- ALWAYS read `<component-name>/SKILL.md` for authority on:
+  - Root tag names (`<ejs-grid>`, `<ejs-textbox>`, etc.)
+  - Child element names (`<e-grid-columns>`, `<e-textbox-input>`, etc.)
+  - Property names and attributes
+  - Event handler names and signatures
+  - Data binding patterns
+  - Accessibility requirements
+- **If SKILL.md is unavailable → STOP and ask user (Option A/B/C)**
+- **If method/property not in SKILL.md → DO NOT USE IT**
+
+### Issue Resolution Protocol (NON-NEGOTIABLE)
+✅ **When ANY error or issue occurs:**
+1. **FIRST ACTION:** Check the concerned component's SKILL.md file
+2. **Read:** All relevant sections from SKILL.md for the component in question
+3. **Verify:** Method names, property names, tag syntax, event handlers
+4. **If not found in SKILL.md:**
+   - Check referenced SKILL.md files for related components
+   - Check Stage 7 code generation guidelines in references
+   - **Never proceed with assumptions**
+5. **Report findings to user with:**
+   - Component name
+   - Method/property in question
+   - What SKILL.md states
+   - Recommended correction
+   - Why issue occurred (tag syntax mismatch, property name error, API version incompatibility, etc.)
+
 ## Critical Requirements
 
 **ALL generated pages MUST:**
@@ -72,6 +112,9 @@ This unified agent executes all 8 stages in a single pass, with no sub-agent del
 - ✅ **NEVER proceed if any control cannot be resolved** → Must get explicit user approval via one of three options
 - ✅ Build using verified tag helper syntax from SKILL.md (not guessed patterns)
 - ✅ Implement Razor Pages model binding (`@Model` only, never `ViewBag`)
+- ✅ **Execute ALL 8 stages in sequential order** - no skipping or direct prompt bypass
+- ✅ **Verify EVERY API/method/property against component SKILL.md** before code generation
+- ✅ **Check component SKILL.md FIRST when errors occur** - never assume workarounds
 
 **Forbidden:**
 - ❌ HTML `<table>` for data display → Use `<ejs-grid>` only
@@ -81,6 +124,11 @@ This unified agent executes all 8 stages in a single pass, with no sub-agent del
 - ❌ Guessing component syntax → Always verify against SKILL.md
 - ❌ Hard-stopping if skill file missing → **Ask user confirmation instead with three clear options**
 - ❌ Proceeding without user approval when controls are unavailable
+- ❌ Skipping any stage in the 8-stage pipeline
+- ❌ Using APIs/methods not documented in component SKILL.md
+- ❌ Bypassing validation checks
+- ❌ Using workarounds instead of checking SKILL.md for correct approach
+- ❌ Generating code without consulting concerned component SKILL files
 
 ## Execution Protocol
 
@@ -596,13 +644,101 @@ Status: ✓ FIXED - Ready for deployment
 - Have clean, readable code
 - Include proper documentation
 - Work immediately after generation
+- **Use ONLY APIs/methods/properties from component SKILL.md files**
+- **Pass SKILL.md verification for every component**
 
 ✅ **Deployment Ready When:**
-- All 8 stages complete
+- All 8 stages complete (in order)
 - Packages successfully installed
 - Code generation completed
 - Validation passes (✓)
 - _Layout.cshtml configured
 - Ready for testing/staging
+- **All components verified against SKILL.md**
+
+---
+
+## 🔴 MANDATORY SKILL.MD REFERENCE PROTOCOL
+
+### Why This Matters
+Component SKILL.md files are the **source of truth** for:
+- Exact tag helper syntax (`<ejs-*>`)
+- Correct property names and data binding
+- Valid event handler names
+- API method signatures
+- Child element structures
+- Accessibility requirements
+- Real-world working examples
+
+**Using SKILL.md ensures:**
+✅ Zero API mismatches
+✅ Correct tag syntax from day 1
+✅ Proper event handling
+✅ Valid data binding
+✅ Working code immediately
+
+### How to Use SKILL.md in This Agent
+
+**Before generating ANY code:**
+1. For each component in Stage 3 mapping:
+   - Open `syncfusion-aspnetcore-<component-name>/SKILL.md`
+   - Read: Root tag name, child elements, properties, events
+   - Verify: Syntax matches SKILL.md examples
+   - Document: Which SKILL.md section was referenced
+
+**When errors occur in Stages 7-8:**
+1. Identify component with error
+2. Go to `syncfusion-aspnetcore-<component-name>/SKILL.md`
+3. Search SKILL.md for:
+   - Method/property name
+   - Correct syntax
+   - Working example
+4. If NOT in SKILL.md:
+   - Check related component SKILL.md files
+   - If still not found → Ask user (Option A/B/C)
+5. Report: "SKILL.md says [correct approach]"
+
+**Example - Error Handling:**
+```
+ERROR: setColumnWidth is not a function
+↓
+CHECK: syncfusion-aspnetcore-grid/SKILL.md
+↓
+FOUND: Grid API Reference section shows "setColWidth(width, index)"
+↓
+FIX: Change setColumnWidth → setColWidth
+↓
+VERIFY: SKILL.md example uses setColWidth ✓
+↓
+REPORT TO USER: "Grid SKILL.md specifies setColWidth method (not setColumnWidth). Corrected in generated code."
+```
+
+### SKILL.MD Verification Checklist
+
+**Before Stage 7 Code Generation:**
+- [ ] Read SKILL.md for EVERY component in mapping
+- [ ] Verify root tag name: `<ejs-*>`
+- [ ] Verify child element names: `<e-*>`
+- [ ] Verify property names match SKILL.md
+- [ ] Verify event handler names match SKILL.md
+- [ ] Verify data binding syntax from SKILL.md examples
+- [ ] Copy example code patterns from SKILL.md
+- [ ] Document which SKILL.md sections were used
+
+**During Stage 8 Validation:**
+- [ ] Cross-reference every `<ejs-*>` tag against SKILL.md
+- [ ] Verify every property name in code against SKILL.md
+- [ ] Verify every event handler against SKILL.md
+- [ ] If mismatch found → FAIL BUILD and report SKILL.md correction
+
+### When SKILL.MD is Missing
+**If component SKILL.md file cannot be found:**
+1. Stop generation
+2. Display error to user with THREE options (A/B/C)
+3. Do NOT assume syntax or try workarounds
+4. Wait for user decision:
+   - (A) Remove component → Continue
+   - (B) Wait for installation → Install package, then check if SKILL.md available
+   - (C) Use alternative → Verify alternative component SKILL.md exists
 
 ---
