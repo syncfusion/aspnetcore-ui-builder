@@ -624,6 +624,74 @@ Status: ✓ FIXED - Ready for deployment
 
 ## Support & Troubleshooting
 
+### Mapped-But-Not-Implemented Methods (MANDATORY FAILURE CONDITION)
+
+**Rule**: ✅ **If method is mapped in SKILL.md, it MUST be actually implemented in component code. NO EXCEPTIONS.**
+
+**Problem Detection**:
+```
+❌ UNACCEPTABLE STATE:
+✅ SKILL.md says: TextBox supports onSearchInput event
+✅ Method is documented and mapped in API
+❌ But component code does NOT implement this method
+❌ Runtime result: "method not found" or event never fires
+
+= VALIDATION FAILURE → GENERATION STOPS
+```
+
+**Mandatory Validation (Stage 3 - Component Mapping)**:
+
+**BEFORE generating any code, verify EVERY mapped method:**
+
+1. **For each method/event in SKILL.md**:
+   - Check: Is this method actually implemented in component code?
+   - Test: Does the method/event work when called/bound?
+   - Verify: Check component source code or official demos
+
+2. **If ANY method is mapped but NOT implemented**:
+   - 🔴 **FAIL VALIDATION**
+   - **STOP code generation immediately**
+   - **REPORT error to user with details**
+
+**Error Report Format**:
+```
+❌ VALIDATION FAILED - MAPPED-BUT-NOT-IMPLEMENTED METHOD
+
+Component: [ComponentName]
+Version: [Version]
+Method/Event: [MethodName]
+
+ISSUE:
+The method '[MethodName]' is documented in SKILL.md and mapped in the API,
+but is NOT actually implemented in the component code.
+
+EVIDENCE:
+✅ Listed in SKILL.md: [Reference section]
+✅ Appears in API documentation
+❌ NOT found in component source code
+❌ Runtime test fails: "method not found" / event doesn't fire
+
+IMPACT:
+Code generation CANNOT proceed. Using this method would create broken code.
+
+ACTION REQUIRED:
+Contact Syncfusion support or wait for component update that implements this method.
+Do NOT use this method until it is fully implemented.
+
+ALTERNATIVE:
+If available, use alternative method: [AlternativeMethod]
+Verify alternative is fully implemented and tested.
+```
+
+**Verification Checklist (BEFORE Stage 7 Code Generation)**:
+- [ ] For EVERY method/event in component SKILL.md
+- [ ] Verify it exists in component/samples source code
+- [ ] If NOT implemented → Inform and Implement it.
+- [ ] If implemented → Mark as VERIFIED ✓
+- [ ] Only proceed to Stage 7 if ALL methods are VERIFIED ✓
+
+---
+
 | Issue | Solution |
 |-------|----------|
 | "Component skill not found" | Agent asks: Continue without component (A) or install skill first (B) - user decides |
