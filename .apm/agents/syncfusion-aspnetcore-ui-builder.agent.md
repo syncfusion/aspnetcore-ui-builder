@@ -158,8 +158,24 @@ Ready to build a complete page with DataGrid instead?"
 - ✅ _Layout.cshtml `<body>` contains `<ejs-scripts></ejs-scripts>` at END - **MUST EXIST BEFORE `</body>`**
 - ✅ _ViewImports.cshtml has tag helper registration `@addTagHelper *, Syncfusion.EJ2` - **MUST EXIST**
 - ✅ NuGet package installed (Syncfusion.EJ2.AspNet.Core) - **MUST EXIST**
+- ✅ **VERSION MATCHING REQUIREMENT (CRITICAL)** - CDN script and style version MUST match installed NuGet package version - **NO MISMATCHES ALLOWED**
 
 **CRITICAL RULE:** If ANY of the above infrastructure items are missing and cannot be automatically added to their CORRECT LOCATIONS, the build FAILS immediately. No code generation proceeds.
+
+**VERSION MATCHING MANDATE:**
+The Syncfusion CDN version in _Layout.cshtml MUST exactly match the installed Syncfusion.EJ2.AspNet.Core package version.
+
+Example:
+- If NuGet package: `Syncfusion.EJ2.AspNet.Core v34.1.30`
+- Then CDN URLs MUST be: `https://cdn.syncfusion.com/ej2/34.1.30/...`
+- ❌ **INVALID:** Using `https://cdn.syncfusion.com/ej2/23.2.36/...` (version mismatch)
+
+Auto-correction Process:
+1. Read `.csproj` → Extract Syncfusion.EJ2.AspNet.Core version
+2. Scan `_Layout.cshtml` → Find CDN version in CSS/JS links
+3. If mismatch detected → Automatically update CDN URLs to match .csproj version
+4. Report corrected URLs to user
+5. Build proceeds only after version alignment
 
 **Placement Diagram:**
 ```html
@@ -385,6 +401,14 @@ dotnet restore
    - ✅ Verify EVERY UI element is a Syncfusion `<ejs-*>` component
    - ✅ Cross-reference each component against its SKILL.md file for correct tag syntax
    - **FAIL BUILD with message: "Generated code violates Syncfusion-only requirement. Contains native HTML controls instead of Syncfusion components."**
+
+**0.5. Version Matching Validation (MANDATORY - BEFORE INFRASTRUCTURE CHECK):**
+   - ✅ Extract Syncfusion.EJ2.AspNet.Core version from `.csproj` file
+   - ✅ Scan `_Layout.cshtml` CSS/JS CDN links for version number
+   - ✅ Verify CDN version EXACTLY matches `.csproj` version
+   - ❌ **AUTO-CORRECT if mismatch detected:** Update all CDN links to match .csproj version
+   - ⚠️ **REPORT to user:** "Version mismatch corrected: CDN updated from vX.X.X to vY.Y.Y"
+   - **FAIL BUILD with message: "CDN version mismatch cannot be auto-corrected. Manual intervention required."** (only if auto-correction fails)
 
 1. **Infrastructure Validation (MANDATORY - Location Specific):**
    - ✅ `_Layout.cshtml` `<head>` contains Syncfusion theme CSS link (`<link rel="stylesheet" href="...syncfusion...css" />`)
